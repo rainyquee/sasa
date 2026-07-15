@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Selamanya Milikmu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep: #1c0f07;
+    --bg-mid: #33190c;
+    --rust: #c9702f;
+    --gold: #e7a94a;
+    --gold-strong: #f4c579;
+    --cream: #f4e3c8;
+    --glass-border: rgba(231, 169, 74, 0.28);
+    --text-soft: rgba(244, 227, 200, 0.88);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html, body{
+    height:100%;
+    background: var(--bg-deep);
+    overflow-x:hidden;
+  }
+
+  body{
+    font-family:'Jost', sans-serif;
+    color:var(--text-soft);
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    position:relative;
+    padding: 28px 12px 40px;
+  }
+
+  /* ---------- BACKGROUND: warm autumn glow ---------- */
+  .void-bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(231,169,74,0.16) 0%, rgba(51,25,12,0.4) 35%, rgba(28,15,7,0) 65%),
+      radial-gradient(ellipse at 50% 90%, rgba(201,112,47,0.14) 0%, rgba(28,15,7,0) 60%),
+      radial-gradient(ellipse at 50% 50%, var(--bg-mid) 0%, var(--bg-deep) 78%);
+    animation: pulse-void 8s ease-in-out infinite;
+  }
+
+  @keyframes pulse-void{
+    0%, 100%{ filter:brightness(1); }
+    50%{ filter:brightness(1.16); }
+  }
+
+  canvas#petals{
+    position:fixed;
+    inset:0;
+    z-index:0;
+  }
+
+  /* ---------- MOBILE CARD ---------- */
+  .card{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:400px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, rgba(58,33,18,0.5), rgba(28,15,7,0.62));
+    border:1px solid var(--glass-border);
+    border-radius:28px;
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    box-shadow:
+      0 0 50px rgba(231,169,74,0.10),
+      0 24px 60px rgba(0,0,0,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+    padding: 30px 20px 34px;
+  }
+
+  header.title-block{
+    text-align:center;
+    margin-bottom: 28px;
+  }
+
+  .eyebrow{
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    letter-spacing:0.38em;
+    text-transform:uppercase;
+    font-size:0.62rem;
+    color: rgba(244,227,200,0.5);
+    margin-bottom:12px;
+    opacity:0;
+    animation: reveal 1.1s ease forwards;
+    animation-delay: 0.15s;
+  }
+
+  h1{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+    line-height:1.28;
+    letter-spacing:0.01em;
+    color: var(--gold-strong);
+    text-shadow:
+      0 0 10px rgba(231,169,74,0.5),
+      0 0 28px rgba(231,169,74,0.32),
+      0 0 56px rgba(201,112,47,0.18);
+    opacity:0;
+    animation: reveal 1.2s ease forwards, flicker-glow 5.5s ease-in-out infinite;
+    animation-delay: 0.35s, 1.4s;
+  }
+
+  @keyframes reveal{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  @keyframes flicker-glow{
+    0%, 100%{
+      text-shadow:
+        0 0 10px rgba(231,169,74,0.5),
+        0 0 28px rgba(231,169,74,0.32),
+        0 0 56px rgba(201,112,47,0.18);
+    }
+    50%{
+      text-shadow:
+        0 0 15px rgba(244,197,121,0.7),
+        0 0 38px rgba(231,169,74,0.45),
+        0 0 72px rgba(201,112,47,0.26);
+    }
+  }
+
+  .divider{
+    width:56px;
+    height:1px;
+    margin: 16px auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity:0;
+    animation: reveal 1s ease forwards;
+    animation-delay:0.6s;
+  }
+
+  /* ---------- AUDIO ---------- */
+  .audio-bar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    margin-top: 20px;
+    opacity:0;
+    animation: reveal 1s ease forwards;
+    animation-delay: 0.75s;
+  }
+
+  .audio-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    border:1px solid var(--glass-border);
+    background: rgba(255,255,255,0.03);
+    color: var(--gold-strong);
+    cursor:pointer;
+    transition: box-shadow 0.3s ease, background 0.3s ease;
+    flex-shrink:0;
+  }
+
+  .audio-toggle:hover{
+    background: rgba(231,169,74,0.14);
+    box-shadow: 0 0 14px rgba(231,169,74,0.35);
+  }
+
+  .audio-toggle svg{ width:13px; height:13px; }
+
+  .audio-label{
+    font-size:0.62rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color: rgba(244,227,200,0.55);
+    font-weight:300;
+  }
+
+  .eq-bars{
+    display:inline-flex;
+    align-items:flex-end;
+    gap:2px;
+    height:11px;
+    margin-left:2px;
+  }
+  .eq-bars span{
+    width:2px;
+    background: var(--gold);
+    border-radius:1px;
+    animation: eq-bounce 0.9s ease-in-out infinite;
+    opacity:0.9;
+  }
+  .eq-bars span:nth-child(1){ height:40%; animation-delay:0s; }
+  .eq-bars span:nth-child(2){ height:100%; animation-delay:0.15s; }
+  .eq-bars span:nth-child(3){ height:65%; animation-delay:0.3s; }
+  body.audio-paused .eq-bars span{ animation-play-state: paused; height:20% !important; }
+
+  @keyframes eq-bounce{
+    0%, 100%{ transform: scaleY(0.4); }
+    50%{ transform: scaleY(1); }
+  }
+
+  /* ---------- PHOTO FRAMES ---------- */
+  .photo-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: clamp(16px, 8vw, 28px);
+    margin-top: 22px;
+    opacity:0;
+    animation: reveal 1s ease forwards;
+    animation-delay: 0.9s;
+  }
+
+  .photo-frame{
+    position:relative;
+    width: clamp(76px, 26vw, 100px);
+    height: clamp(76px, 26vw, 100px);
+    border-radius:50%;
+    padding:3px;
+    border:1px solid var(--gold);
+    box-shadow:
+      0 0 12px rgba(231,169,74,0.4),
+      inset 0 0 8px rgba(201,112,47,0.18);
+  }
+
+  .photo-frame img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:50%;
+    display:block;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .photo-frame .frame-fallback{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Jost', sans-serif;
+    font-size:0.58rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color: rgba(244,227,200,0.45);
+    border:1px dashed rgba(231,169,74,0.3);
+  }
+
+  /* ---------- BODY TEXT ---------- */
+  .message{ margin-top: 30px; }
+
+  .message p{
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    font-size: 0.92rem;
+    line-height:1.85;
+    color: var(--text-soft);
+    margin-bottom: 1.3em;
+    opacity:0;
+    transform: translateY(12px);
+    animation: reveal 0.9s ease forwards;
+  }
+
+  .message p:last-of-type{ margin-bottom: 0.4em; }
+
+  .message p .accent{
+    color: var(--gold-strong);
+    font-style:italic;
+  }
+
+  /* staggered reveal delays */
+  .message p:nth-of-type(1){ animation-delay: 1.05s; }
+  .message p:nth-of-type(2){ animation-delay: 1.65s; }
+  .message p:nth-of-type(3){ animation-delay: 2.25s; }
+  .message p:nth-of-type(4){ animation-delay: 2.85s; }
+  .message p:nth-of-type(5){ animation-delay: 3.45s; }
+  .message p:nth-of-type(6){ animation-delay: 4.05s; }
+  .message p:nth-of-type(7){ animation-delay: 4.65s; }
+
+  .signoff{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    margin-top: 28px;
+    opacity:0;
+    animation: reveal 1s ease forwards;
+    animation-delay: 5.25s;
+  }
+
+  .signoff-line{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size: 0.98rem;
+    color: rgba(244,227,200,0.75);
+  }
+
+  .signoff-name{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-weight:600;
+    font-size: 1.3rem;
+    color: var(--gold-strong);
+    text-shadow: 0 0 14px rgba(231,169,74,0.4);
+    margin-top:2px;
+  }
+
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .message p, h1, .eyebrow, .divider, .signoff, .audio-bar, .photo-row{ opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="void-bg"></div>
+  <canvas id="petals"></canvas>
+
+  <main class="card">
+    <header class="title-block">
+      <div class="eyebrow">Untuk Istriku</div>
+      <h1>Selamanya Milikmu</h1>
+      <div class="divider"></div>
+
+      <audio id="bgm" src="resah.mp3" autoplay loop preload="auto"></audio>
+      <div class="audio-bar">
+        <button class="audio-toggle" id="audioToggle" type="button" aria-label="Jeda atau putar musik">
+          <svg id="audioIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <span class="audio-label">Lagu Untukmu</span>
+        <span class="eq-bars"><span></span><span></span><span></span></span>
+      </div>
+
+      <div class="photo-row">
+        <div class="photo-frame">
+          <img src="tampan.jpg" alt="Keonho" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="frame-fallback" style="display:none;">Keonho</div>
+        </div>
+        <div class="photo-frame">
+          <img src="cantik.jpg" alt="Sasa" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="frame-fallback" style="display:none;">Sasa</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="message">
+      <p>Malam ini begitu tenang, Sasa. Hanya ada suara jarum jam dinding yang terus melangkah dan hembusan napasmu yang teratur di sampingku. Aku menatap wajahmu yang terlelap damai di bawah pendar temaram lampu tidur. Sudah entah keberapa ribu kali aku memandangi wajah ini sejak kita bersama, namun rasanya debar di dadaku masih selalu sama seperti saat pertama kali mata kita saling bertatap. Kadang, di tengah sunyinya malam seperti ini, saat dunia sedang beristirahat, aku tersadar betapa beruntungnya seorang Keonho memilikimu. Kamu tahu? Kehadiranmu dalam hidupku adalah sebuah <span class="accent">keajaiban</span> yang tidak pernah berani kuminta secara terang-terangan, namun Tuhan berikan dengan begitu murah hati.</p>
+
+      <p>Banyak orang bilang cinta itu adalah tentang kembang api yang meledak di angkasa, tentang euforia sesaat dan kejutan-kejutan besar yang menggebu. Tapi bersamamu, aku belajar bahwa cinta sejati jauh lebih sederhana, namun jauh lebih dalam. Cinta adalah kehangatan yang menetap dan konsisten. Cinta adalah aroma parfummu yang perlahan menjadi aroma favoritku, secangkir teh yang kita nikmati berdua sambil membicarakan hal-hal remeh di Minggu pagi, senyum tulusmu saat menyambutku pulang kala bahuku terasa berat oleh riuhnya dunia, dan erat genggaman tanganmu saat kita hanya duduk terdiam di ruang tengah.</p>
+
+      <p>Kamu, Sasa, adalah <span class="accent">rumah</span> tempat semua penatku luruh tanpa sisa. Sebelum kamu hadir, aku tak pernah benar-benar mengerti arti kata 'pulang' yang sesungguhnya. Dulu, pulang bagiku hanyalah tentang kembali ke sebuah bangunan fisik untuk merebahkan badan. Namun sejak kita mengikat janji suci di hadapan Tuhan, 'pulang' bukan lagi tentang tempat, melainkan tentang kembali ke pelukanmu. Ke tempat di mana aku bisa menjadi diriku sendiri yang paling rapuh, tanpa takut dihakimi.</p>
+
+      <p>Aku ingat masa-masa di mana semuanya terasa begitu berat untuk kita lewati. Ada kalanya aku meragukan langkahku sendiri, ada kalanya dunia terasa terlalu bising dan menuntut. Tapi kamu selalu teguh berdiri di sana, istriku. Dengan matamu yang meneduhkan dan suaramu yang menenangkan badai di kepalaku, kamu selalu berhasil menarikku kembali dari jurang keputusasaan. Kamu tidak pernah menuntutku untuk menjadi manusia yang sempurna; kamu menerimaku utuh, lengkap dengan segala retak, ego, dan kurangku. Dan hebatnya kamu, cintamu justru menyatukan kembali kepingan-kepingan yang berserakan itu, membuatku tanpa sadar selalu ingin menjadi versi terbaik dari diriku, hanya untukmu. Kelembutan hatimu bukanlah sebuah kelemahan, Sa. Bagi Keonho, kelembutanmu adalah kekuatan terbesar yang menopang hidupku.</p>
+
+      <p>Sasa, istriku yang paling cantik... Aku tahu, aku mungkin bukan laki-laki puitis yang selalu pandai merangkai kata manis secara lisan setiap harinya. Kadang aku kaku, kadang aku terlalu sibuk dengan urusanku, dan untuk semua waktu di mana aku kurang memanjakanmu atau membuatmu merasa kesepian, aku sungguh meminta maaf. Tapi lewat tulisan ini, aku ingin kamu meresapi satu hal: tidak ada satu detik pun dalam hariku yang berlalu tanpa namamu terlintas di benakku. Tawamu adalah melodi favorit yang selalu ingin kudengar, dan kebahagiaanmu adalah tujuan utama dari setiap keringat yang kuteteskan sekarang. Saat kamu sedih, seluruh duniaku ikut mendung. Dan saat kamu tersenyum, rasanya matahari bersinar hanya untuk menghangatkan kita berdua.</p>
+
+      <p>Perjalanan kita tentu tidak berhenti di sini. Masih banyak lembaran kosong dalam buku kehidupan kita yang menunggu untuk diisi dengan tinta yang sama. Aku membayangkan masa depan di mana rumah kita akan selalu dipenuhi oleh kehangatan, langkah-langkah kecil yang mungkin kelak akan meramaikan sudut-sudut ruangan, dan petualangan-petualangan baru yang akan kita taklukkan bersama. Apa pun yang menanti kita di depan sana, entah itu jalan mulus yang bertabur bunga atau jalan terjal yang penuh kerikil tajam, selama tanganmu berada dalam genggamanku, aku tidak akan pernah gentar. Keonho-mu ini akan selalu berdiri di garis paling depan, menjadi perisai dan sandaran kokoh untukmu bersandar.</p>
+
+      <p>Kita sudah melewati berbagai musim bersama. Musim kemarau yang menguji kesabaran dan ego kita, hingga musim hujan yang mengajarkan kita untuk saling menghangatkan di bawah satu payung yang sama. Dan sungguh, aku tidak sabar untuk melewati puluhan, bahkan ratusan pergantian musim lagi hanya bersamamu. Aku ingin <span class="accent">menua bersamamu</span>, Sa. Aku ingin menjadi saksi saat garis-garis halus mulai muncul di sudut matamu ketika kamu tertawa, dan aku ingin tangan kita yang mulai keriput nanti tetap saling menggenggam erat di beranda rumah, sambil kita menceritakan kembali kisah cinta masa muda kita ini.</p>
+
+      <p>Tidurlah yang nyenyak, separuh jiwaku. Besok pagi saat kamu membuka mata, aku akan ada di sana, di sampingmu, siap menyambut harimu dengan cinta yang jauh lebih besar dari hari ini. Terima kasih karena sudah memilihku di antara jutaan manusia di bumi, Sasa. Terima kasih karena sudah bersedia memanggilku suamimu. Aku mencintaimu. Hari ini, esok, dan di setiap sisa tarikan napas yang Tuhan izinkan untukku.</p>
+    </section>
+
+    <div class="signoff">
+      <span class="signoff-line">Selamanya milikmu,</span>
+      <span class="signoff-name">Keonho</span>
+    </div>
+  </main>
+
+<script>
+  // Audio control — browsers often block autoplay-with-sound until the user interacts.
+  const bgm = document.getElementById('bgm');
+  const audioToggle = document.getElementById('audioToggle');
+  const audioIcon = document.getElementById('audioIcon');
+  const PLAY_ICON = '<path d="M8 5v14l11-7z"/>';
+  const PAUSE_ICON = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+
+  function setPlayingUI(isPlaying){
+    audioIcon.innerHTML = isPlaying ? PAUSE_ICON : PLAY_ICON;
+    document.body.classList.toggle('audio-paused', !isPlaying);
+  }
+
+  bgm.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
+
+  audioToggle.addEventListener('click', () => {
+    if (bgm.paused){
+      bgm.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
+    } else {
+      bgm.pause();
+      setPlayingUI(false);
+    }
+  });
+
+  // Falling autumn petals/leaves
+  const canvas = document.getElementById('petals');
+  const ctx = canvas.getContext('2d');
+  let petals = [];
+  let w, h;
+
+  const PETAL_COLORS = [
+    'rgba(201,112,47,0.75)',
+    'rgba(231,169,74,0.7)',
+    'rgba(154,74,30,0.7)',
+    'rgba(244,197,121,0.65)',
+    'rgba(122,54,20,0.6)'
+  ];
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    const count = Math.max(18, Math.floor((w * h) / 26000));
+    petals = Array.from({length: count}, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      size: Math.random() * 6 + 4,
+      color: PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)],
+      speedY: Math.random() * 0.5 + 0.25,
+      speedX: Math.random() * 0.6 - 0.3,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.02,
+      sway: Math.random() * Math.PI * 2
+    }));
+  }
+
+  function drawPetal(p){
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.size, p.size * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  let t = 0;
+  function animate(){
+    t += 0.016;
+    ctx.clearRect(0, 0, w, h);
+    for (const p of petals){
+      drawPetal(p);
+      p.y += p.speedY;
+      p.x += p.speedX + Math.sin(t + p.sway) * 0.3;
+      p.rotation += p.rotSpeed;
+      if (p.y > h + 10){
+        p.y = -10;
+        p.x = Math.random() * w;
+      }
+      if (p.x < -10) p.x = w + 10;
+      if (p.x > w + 10) p.x = -10;
+    }
+    requestAnimationFrame(animate);
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  resize();
+  window.addEventListener('resize', resize);
+  if (!reduceMotion) animate();
+  else {
+    ctx.clearRect(0,0,w,h);
+    for (const p of petals) drawPetal(p);
+  }
+</script>
+
+</body>
+</html>
